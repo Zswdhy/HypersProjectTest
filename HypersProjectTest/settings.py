@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import datetime
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'User',
 ]
 
 MIDDLEWARE = [
@@ -117,3 +119,13 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# DRF Abstract
+AUTH_USER_MODEL = 'User.User'
+
+JWT_AUTH = {
+    # 加盐 默认使用settings 中的 SECRET_KEY
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=15),  # 过期时间
+    'JWT_ALLOW_REFRESH': True,  # 允许令牌刷新
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=20),  # 刷新令牌时间
+}
