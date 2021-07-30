@@ -2,3 +2,4 @@ HypersProjectTest/.idea/
 HypersProjectTest/__pycache__/
 *.pyc
 /.idea
+/db.sqlite3

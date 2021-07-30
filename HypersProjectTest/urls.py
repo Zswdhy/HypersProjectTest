@@ -21,11 +21,13 @@ from User.views import MyTokenObtainPairView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/', include('User.urls')),
+    path('user/', include('User.urls')),  # user api
+    path('backapi/', include('BackApi.urls')),  # backend api
 ]
 
+# simple jwt
 urlpatterns += [
-    # path('api-token-auth/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # 生成 token
+    # path('api-token-auth/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # 默认返回 token
     path('api-token-auth/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),  # 生成 token
     path('api-token-refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # 刷新 token
 ]
