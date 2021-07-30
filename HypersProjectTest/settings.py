@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     'rest_framework',
     'User',
     'BackApi',
@@ -125,9 +126,31 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # DRF Abstract
 AUTH_USER_MODEL = 'User.User'
 
-JWT_AUTH = {
-    # 加盐 默认使用settings 中的 SECRET_KEY
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=15),  # 过期时间
-    'JWT_ALLOW_REFRESH': True,  # 允许令牌刷新
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=20),  # 刷新令牌时间
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=10),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=15),
+    'ROTATE_REFRESH_TOKENS': True,
 }
+
+REST_FRAMEWORK = {
+    # 权限
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    # 认证
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    # 过滤
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+    # 分页器
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100,
+}
+
+PROJECT_EMPLOYEE = 20  # 项目最大客户数量
