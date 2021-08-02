@@ -53,14 +53,11 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     def put(self, request, *args, **kwargs):
         """ 只能更新 e_job,province,city """
         check_fields = ['id', 'e_job', 'province', 'city']
-        check_fields.sort()
         update_data = request.data.copy()
-        key_ls = list(update_data.keys())
         e_id = update_data['id']
-        key_ls.sort()
 
         """ 更新之前的逻辑判断 """
-        if not e_id or not Employee.objects.filter(id=e_id) or key_ls != check_fields:
+        if not e_id or not Employee.objects.filter(id=e_id) or set(update_data) > set(check_fields):
             return Response({'code': 400, 'message': '更新的id不存在或者传参错误'})
 
         update_data['update_time'] = datetime.datetime.now()
@@ -74,17 +71,21 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         join_time_start = request.GET.get('join_time_start')
         join_time_end = request.GET.get('join_time_end')
-        update_time = request.GET.get('update-time')
         e_name = request.GET.get('e_name')
         if join_time_start and join_time_end:
-            print(join_time_start)
             start = time.strptime(join_time_start.split('.')[0], '%Y-%m-%d %H:%M:%S')
             end = time.strptime(join_time_end.split('.')[0], '%Y-%m-%d %H:%M:%S')
-            # print(t)
-            print('start', start, type(start))
-            print('end', end, type(end))
-            data = Employee.objects.filter(join_time__range=(start, end))
-            return Response(data)
+            start_time = datetime.datetime(start.tm_year, start.tm_mon, start.tm_mday, start.tm_hour, start.tm_min,
+                                           start.tm_sec)
+            end_time = datetime.datetime(end.tm_year, end.tm_mon, end.tm_mday, end.tm_hour, end.tm_min, end.tm_sec)
+
+            data = Employee.objects.filter(join_time__range=(start_time, end_time))
+            res = []
+            for item in data:
+                temp = model_to_dict(item)
+                temp['join_time'] = item.join_time
+                res.append(temp)
+            return Response({'code': 200, 'data': res})
         elif e_name:
             """ 名称的模糊查询,以 e_name 开头，没使用 contains """
             select_data = Employee.objects.filter(e_name__istartswith=e_name)
