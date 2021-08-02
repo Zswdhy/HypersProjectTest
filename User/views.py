@@ -14,6 +14,8 @@ def first_test(request):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
+    authentication_classes = []
+    permission_classes = []
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
