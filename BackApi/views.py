@@ -3,7 +3,6 @@ import time
 
 from django.db.models import Q
 from django.forms import model_to_dict
-from django.http import JsonResponse
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import viewsets, filters
@@ -11,10 +10,6 @@ from rest_framework.response import Response
 
 from BackApi.models import Employee
 from BackApi.serializers import EmployeeSerializer, EmployeeFilterSet
-
-
-def back_api_test(request):
-    return JsonResponse({'code': 200, 'message': 'test 通过'})
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
@@ -79,7 +74,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
                                            start.tm_sec)
             end_time = datetime.datetime(end.tm_year, end.tm_mon, end.tm_mday, end.tm_hour, end.tm_min, end.tm_sec)
 
-            data = Employee.objects.filter(join_time__range=(start_time, end_time))
+            data = Employee.objects.filter(Q(is_delete=False) and Q(join_time__range=(start_time, end_time)))
             res = []
             for item in data:
                 temp = model_to_dict(item)
@@ -88,6 +83,8 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             return Response({'code': 200, 'data': res})
         elif e_name:
             """ 名称的模糊查询,以 e_name 开头，没使用 contains """
-            select_data = Employee.objects.filter(e_name__istartswith=e_name)
+            select_data = Employee.objects.filter(Q(is_delete=False) and Q(e_name__istartswith=e_name))
             res = [model_to_dict(item) for item in select_data]
             return Response({'code': 200, 'data': res})
+        else:
+            return Response({'code': 400, 'message': '传参数错'})
