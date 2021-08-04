@@ -6,7 +6,7 @@ from .views.projects import ProjectsListViewSet
 
 router = routers.DefaultRouter()
 router.register('employee', EmployeeViewSet)
-router.register('projectlist', ProjectsListViewSet)
+router.register('projectList', ProjectsListViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

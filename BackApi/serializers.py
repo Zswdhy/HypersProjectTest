@@ -36,8 +36,8 @@ class ProjectsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectsList
         # fields = ['p_name', 'p_start_time', 'p_end_time', 'employee_num', 'user_id']
-        # fields = '__all__'
-        exclude = ['is_delete']
+        fields = '__all__'
+        # exclude = ['is_delete']
 
 
 """ 项目详情页 """
