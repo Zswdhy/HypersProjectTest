@@ -20,8 +20,8 @@ class ProjectsList(models.Model):
 
 
 class ProjectsDetails(models.Model):
-    pd_id = models.IntegerField(primary_key=True)
-    id = models.ForeignKey('ProjectsList', on_delete=models.CASCADE)
+    pd_id = models.IntegerField(primary_key=True)  # 项目详情 id 自增 id
+    id = models.ForeignKey('ProjectsList', on_delete=models.CASCADE)  # 外键，项目 id
     p_name = models.CharField(max_length=64)
     p_introduce = models.CharField(max_length=255)
     e_name = models.CharField(max_length=32)
