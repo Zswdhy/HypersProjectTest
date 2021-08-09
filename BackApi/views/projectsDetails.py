@@ -1,8 +1,10 @@
+import datetime
+
 from rest_framework import viewsets
 from rest_framework.response import Response
 
 from BackApi.models import ProjectsDetails, ProjectsList, Employee
-from BackApi.serializers import ProjectsDetailsSerializer
+from BackApi.serializers import ProjectsDetailsSerializer, EmployeeSerializer
 from HypersProjectTest.settings import PROJECT_EMPLOYEE
 
 
@@ -37,6 +39,32 @@ class ProjectsDetailsViewSet(viewsets.ModelViewSet):
         res = ProjectsDetailsSerializer(data=data, partial=True)
         if res.is_valid():
             res.save()
+
+            """更新客户的部分字段"""
+            origin_data = Employee.objects.filter(id=data['e_id']).first()
+            data = {'id': data['e_id'], 'is_in_project': True, 'p_name': p_details['p_name'],
+                    'update_time': datetime.datetime.now()}
+            res_2 = EmployeeSerializer(data=data, instance=origin_data, partial=True)
+            if res_2.is_valid():
+                res_2.save()
+            else:
+                return Response({'code': 111, 'error': res_2.errors})
             return Response({'code': 201, 'message': '新增成功'})
         else:
             return Response({'code': 400, 'message': '数据校验失败', 'error': res.errors})
+
+    def delete(self, request, *args, **kwargs):
+        """删除单独的客户."""
+        pk = request.POST.get('e_id')
+        if not pk or not ProjectsDetails.objects.filter(e_id=int(pk)):
+            return Response({'code': 400, 'message': '删除的客户id不存在'})
+
+        ProjectsDetails.objects.filter(e_id=int(pk)).delete()
+        origin_data = Employee.objects.filter(id=pk).first()
+        data = {'is_in_project': False, 'p_name': None, 'update_time': datetime.datetime.now()}
+        res = EmployeeSerializer(data=data, instance=origin_data, partial=True)
+        if res.is_valid():
+            res.save()
+            return Response({'code': 200, 'message': '删除成功'})
+
+        return Response({'code': 400, 'message': '删除失败', 'error': res.errors})
