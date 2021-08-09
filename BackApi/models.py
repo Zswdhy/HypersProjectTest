@@ -1,52 +1,55 @@
 from django.db import models
 
+""" 客户 model """
+
+
+class Employee(models.Model):
+    id = models.AutoField(primary_key=True)
+    eName = models.CharField(max_length=64, null=True, blank=True)
+    eAge = models.IntegerField(null=True, blank=True)
+    eJob = models.CharField(max_length=64, null=True, blank=True)
+    province = models.CharField(max_length=32, null=True, blank=True)
+    city = models.CharField(max_length=32, null=True, blank=True)
+    pName = models.CharField(max_length=64, null=True, blank=True)
+    joinTime = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updateTime = models.DateTimeField(auto_now=True, null=True, blank=True)
+    isDelete = models.BooleanField(default=False)
+    isInProject = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'employee'
+        verbose_name = '客户'
+
+
 """ 项目列表 model  """
 
 
 class ProjectsList(models.Model):
     id = models.AutoField(primary_key=True)
-    p_name = models.CharField(max_length=64, null=True, blank=True)
-    p_start_time = models.DateField(null=True, blank=True)
-    p_end_time = models.DateField(null=True, blank=True)
+    pName = models.CharField(max_length=64, null=True, blank=True)
+    pStartTime = models.DateField(null=True, blank=True)
+    pEndTime = models.DateField(null=True, blank=True)
     employee_num = models.IntegerField(null=True, blank=True)
-    user_id = models.IntegerField(null=True, blank=True)
-    is_delete = models.BooleanField(default=False)
+    userId = models.IntegerField(null=True, blank=True)
+    isDelete = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'project_list'
+        verbose_name = '项目列表'
 
 
 """ 项目详情 model """
 
 
 class ProjectsDetails(models.Model):
-    pd_id = models.IntegerField(primary_key=True)  # 项目详情 id 自增 id
-    p_id = models.ForeignKey('ProjectsList', on_delete=models.CASCADE)  # 外键，项目 id
-    p_name = models.CharField(max_length=64, null=True, blank=True)
-    p_introduce = models.CharField(max_length=255, null=True, blank=True)
-    e_id = models.ForeignKey('Employee', on_delete=models.CASCADE)  # 外键，客户 id
-    e_name = models.CharField(max_length=32, null=True, blank=True)
-    e_age = models.IntegerField(null=True, blank=True)
+    pdId = models.IntegerField(primary_key=True)  # 项目详情 id 自增 id
+    pId = models.ForeignKey('ProjectsList', on_delete=models.CASCADE)  # 外键，项目 id
+    pName = models.CharField(max_length=64, null=True, blank=True)
+    pIntroduce = models.CharField(max_length=255, null=True, blank=True)
+    eId = models.ForeignKey('Employee', on_delete=models.CASCADE)  # 外键，客户 id
+    eName = models.CharField(max_length=32, null=True, blank=True)
+    eAge = models.IntegerField(null=True, blank=True)
 
     class Meta:
         db_table = 'project_details'
-
-
-""" 客户 model """
-
-
-class Employee(models.Model):
-    id = models.AutoField(primary_key=True)
-    e_name = models.CharField(max_length=64)
-    e_age = models.IntegerField(null=True, blank=True)
-    e_job = models.CharField(max_length=64, null=True, blank=True)
-    province = models.CharField(max_length=32, null=True, blank=True)
-    city = models.CharField(max_length=32, null=True, blank=True)
-    p_name = models.CharField(max_length=64, null=True, blank=True)
-    join_time = models.DateTimeField(auto_now=True, null=True, blank=True)
-    update_time = models.DateTimeField(auto_now=True, null=True, blank=True)
-    is_delete = models.BooleanField(default=False)
-    is_in_project = models.BooleanField(default=False)
-
-    class Meta:
-        db_table = 'employee'
+        verbose_name = '项目详情'

@@ -149,8 +149,8 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
     # 分页器
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100,
+    "PAGE_SIZE": 200,
+    "DEFAULT_PAGINATION_CLASS": "utils.pagination.PageNumberPagination",
 }
 
 PROJECT_EMPLOYEE = 20  # 项目最大客户数量
