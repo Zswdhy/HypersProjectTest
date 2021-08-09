@@ -11,6 +11,7 @@ class ProjectsList(models.Model):
     employee_num = models.IntegerField(null=True, blank=True)
     user_id = models.IntegerField(null=True, blank=True)
     is_delete = models.BooleanField(default=False)
+    is_in_project = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'project_list'
@@ -24,6 +25,7 @@ class ProjectsDetails(models.Model):
     id = models.ForeignKey('ProjectsList', on_delete=models.CASCADE)  # 外键，项目 id
     p_name = models.CharField(max_length=64)
     p_introduce = models.CharField(max_length=255)
+    e_id = models.ForeignKey('Employee', on_delete=models.CASCADE)  # 外键，客户 id
     e_name = models.CharField(max_length=32)
     e_age = models.IntegerField(null=True, blank=True)
 
