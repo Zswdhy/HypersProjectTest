@@ -27,6 +27,11 @@ class ProjectsListViewSet(viewsets.ModelViewSet):
 
     def delete(self, request, *args, **kwargs):
         p_id = request.POST.get('pId')
+        """用户权限."""
+        if ProjectsList.objects.filter(id=p_id).values('userId')[0]['userId'] != request.user.id:
+            return Response({'code': 400, 'message': '无修改权限'})
+
+        """参数校验."""
         if not p_id or not self.filter_queryset(self.queryset).filter(id=int(p_id)):
             return Response({'code': 400, 'message': '传参错误'})
 

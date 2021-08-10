@@ -56,6 +56,12 @@ class ProjectsDetailsViewSet(viewsets.ModelViewSet):
     def delete(self, request, *args, **kwargs):
         """删除单独的客户."""
         pk = request.POST.get('eId')
+        """用户权限."""
+        if ProjectsList.objects.filter(
+                id=ProjectsDetails.objects.filter(eId=pk).values('pId')[0]['pId']) \
+                .values('userId')[0]['userId'] != request.user.id:
+            return Response({'code': 400, 'message': '无修改权限'})
+
         if not pk or not ProjectsDetails.objects.filter(eId=int(pk)):
             return Response({'code': 400, 'message': '删除的客户id不存在'})
 

@@ -23,8 +23,7 @@ class PageNumberPagination(BasePageNumberPagination):
                         (
                             "page",
                             {
-                                "current": (self.page.number - 1)
-                                           * self.page.paginator.per_page,
+                                "current": (self.page.number - 1) * self.page.paginator.per_page,
                                 "size": self.page.paginator.per_page,
                                 "total": self.page.paginator.count,
                             },
