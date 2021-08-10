@@ -33,16 +33,16 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             return Response({'code': 400, 'message': '数据校验失败', 'error': res.errors})
 
     def delete(self, request, *args, **kwargs):
-        e_id = request.POST.get('id')
+        eId = request.POST.get('id')
         """ 删除之前的逻辑判断 """
-        if not e_id or not Employee.objects.filter(id=e_id) or \
-                Employee.objects.filter(id=e_id).values("isDelete")[0]['isDelete']:
+        if not eId or not Employee.objects.filter(id=eId) or \
+                Employee.objects.filter(id=eId).values("isDelete")[0]['isDelete']:
             return Response({'code': 400, 'message': '删除的id不存在或者传参错误'})
 
         data = request.data.copy()
         data['isDelete'] = True
         data['updateTime'] = datetime.datetime.now()
-        origin_data = Employee.objects.filter(id=e_id).first()
+        origin_data = Employee.objects.filter(id=eId).first()
         res = EmployeeSerializer(data=data, instance=origin_data, partial=True)
         if res.is_valid():
             res.save()
@@ -53,14 +53,14 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         """ 只能更新 e_job,province,city """
         check_fields = ['id', 'eJob', 'province', 'city']
         update_data = request.data.copy()
-        e_id = update_data['id']
+        eId = update_data['id']
 
         """ 更新之前的逻辑判断 """
-        if not e_id or not Employee.objects.filter(id=e_id) or set(update_data) > set(check_fields):
+        if not eId or not Employee.objects.filter(id=eId) or set(update_data) > set(check_fields):
             return Response({'code': 400, 'message': '更新的id不存在或者传参错误'})
 
         update_data['updateTime'] = datetime.datetime.now()
-        origin_data = Employee.objects.filter(id=e_id).first()
+        origin_data = Employee.objects.filter(id=eId).first()
         res = EmployeeSerializer(data=update_data, instance=origin_data, partial=True)
         if res.is_valid():
             res.save()
