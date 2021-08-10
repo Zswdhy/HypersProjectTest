@@ -19,7 +19,7 @@ filters = [
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
-    queryset = Employee.objects.all().order_by('eName', 'eAge')
+    queryset = Employee.objects.filter(isDelete=False).order_by('eName', 'eAge')
     serializer_class = EmployeeSerializer
     filter_backends = filters
 
@@ -55,8 +55,8 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         update_data = request.data.copy()
         eId = update_data['id']
 
-        """ 更新之前的逻辑判断 """
-        if not eId or not Employee.objects.filter(id=eId) or set(update_data) > set(check_fields):
+        """ 更新之前的逻辑判断,只能更新未删除状态的数据 """
+        if not eId or self.filter_queryset(self.queryset).filter(id=eId) or set(update_data) > set(check_fields):
             return Response({'code': 400, 'message': '更新的id不存在或者传参错误'})
 
         update_data['updateTime'] = datetime.datetime.now()
