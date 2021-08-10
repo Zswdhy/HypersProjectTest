@@ -55,18 +55,17 @@ class ProjectsDetailsViewSet(viewsets.ModelViewSet):
 
     def delete(self, request, *args, **kwargs):
         """删除单独的客户."""
-        pk = request.POST.get('eId')
+        eId = request.POST.get('eId')
+        pId = request.POST.get('pId')
         """用户权限."""
-        if ProjectsList.objects.filter(
-                id=ProjectsDetails.objects.filter(eId=pk).values('pId')[0]['pId']) \
-                .values('userId')[0]['userId'] != request.user.id:
+        if ProjectsList.objects.filter(id=pId).values('userId')[0]['userId'] != request.user.id:
             return Response({'code': 400, 'message': '无修改权限'})
 
-        if not pk or not ProjectsDetails.objects.filter(eId=int(pk)):
+        if not eId or not ProjectsDetails.objects.filter(eId=int(eId)):
             return Response({'code': 400, 'message': '删除的客户id不存在'})
 
-        ProjectsDetails.objects.filter(eId=int(pk)).delete()
-        origin_data = Employee.objects.filter(id=pk).first()
+        ProjectsDetails.objects.filter(eId=int(eId)).delete()
+        origin_data = Employee.objects.filter(id=eId).first()
         data = {'isInProject': False, 'pName': None, 'updateTime': datetime.datetime.now()}
         res = EmployeeSerializer(data=data, instance=origin_data, partial=True)
         if res.is_valid():
