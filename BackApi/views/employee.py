@@ -22,8 +22,6 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.filter(isDelete=False)
     serializer_class = EmployeeSerializer
     filter_backends = filters
-    authentication_classes = []
-    permission_classes = []
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -33,19 +31,19 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     def delete(self, request, *args, **kwargs):
         eId = request.POST.get('id')
         """ 删除之前的逻辑判断 """
-        if not eId or not Employee.objects.filter(id=eId) or \
-                Employee.objects.filter(id=eId).values("isDelete")[0]['isDelete']:
-            return Response({'code': 400, 'message': '删除的id不存在或者传参错误'})
+        if not eId or not self.filter_queryset(self.get_queryset()).filter(id=eId):
+            return Response({'message': '删除的id不存在或者传参错误'}, status=status.HTTP_404_NOT_FOUND)
 
         data = request.data.copy()
         data['isDelete'] = True
         data['updateTime'] = datetime.datetime.now()
         origin_data = Employee.objects.filter(id=eId).first()
-        res = EmployeeSerializer(data=data, instance=origin_data, partial=True)
-        if res.is_valid():
-            res.save()
-            return Response({'code': 200, 'message': '删除成功'})
-        return Response({'code': 400, 'message': '数据校验失败', 'error': res.errors})
+        serializer = EmployeeSerializer(data=data, instance=origin_data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'id': eId, 'message': '删除成功'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'message': '数据校验失败', 'error': serializer.errors})
 
     def put(self, request, *args, **kwargs):
         """ 只能更新 e_job,province,city """
