@@ -1,6 +1,6 @@
 import datetime
 
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 
 from BackApi.filters.employee import (
@@ -19,18 +19,16 @@ filters = [
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
-    queryset = Employee.objects.filter(isDelete=False).order_by('eName', 'eAge')
+    queryset = Employee.objects.filter(isDelete=False)
     serializer_class = EmployeeSerializer
     filter_backends = filters
+    authentication_classes = []
+    permission_classes = []
 
     def create(self, request, *args, **kwargs):
-        data = request.data
-        res = EmployeeSerializer(data=data, partial=True)
-        if res.is_valid():
-            res.save()
-            return Response({'code': 201, 'message': '新增成功'})
-        else:
-            return Response({'code': 400, 'message': '数据校验失败', 'error': res.errors})
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, *args, **kwargs):
         eId = request.POST.get('id')

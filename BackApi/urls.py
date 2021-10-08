@@ -6,7 +6,7 @@ from .views.employee import EmployeeViewSet
 from .views.projectsDetails import ProjectsDetailsViewSet
 from .views.projectsList import ProjectsListViewSet
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register('employee', EmployeeViewSet)
 router.register('projectList', ProjectsListViewSet)
 router.register('projectsDetail', ProjectsDetailsViewSet)

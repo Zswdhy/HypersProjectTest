@@ -5,7 +5,7 @@ from django.db import models
 
 class Employee(models.Model):
     id = models.AutoField(primary_key=True)
-    eName = models.CharField(max_length=64, null=True, blank=True)
+    eName = models.CharField(max_length=64)
     eAge = models.IntegerField(null=True, blank=True)
     eJob = models.CharField(max_length=64, null=True, blank=True)
     province = models.CharField(max_length=32, null=True, blank=True)
@@ -19,6 +19,7 @@ class Employee(models.Model):
     class Meta:
         db_table = 'employee'
         verbose_name = '客户'
+        ordering = ["eName", "eAge"]
 
 
 """ 项目列表 model  """
